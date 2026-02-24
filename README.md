@@ -1,59 +1,111 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Project Manager – Aplikacja do zarządzania projektami
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Project preview](https://via.placeholder.com/1200x600.png?text=Project+Manager+Screenshot)  
+*(zastąp ten placeholder prawdziwym zrzutem ekranu – najlepiej 2–3 screeny w sekcji poniżej)*
 
-## About Laravel
+Prosta, nowoczesna aplikacja typu Kanban do zarządzania projektami i zadaniami.  
+Stworzona jako projekt portfolio, demonstrująca praktyczne użycie **Laravel 11/12** + **Tailwind CSS** + Blade + Alpine.js.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Główne funkcjonalności
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Rejestracja i logowanie użytkowników (Laravel Breeze)
+- Tworzenie, edycja i usuwanie projektów
+- Tablica Kanban z drag & drop (kolumny: To Do / In Progress / Done)
+- Zarządzanie zadaniami: tytuł, opis, priorytet, termin, przypisanie do użytkownika
+- Komentarze pod zadaniami
+- Responsywny design + tryb ciemny (Tailwind dark mode)
+- Powiadomienia w aplikacji / e-mail (opcjonalnie)
+- Wyszukiwanie i filtrowanie zadań/projektów
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Technologie
 
-## Learning Laravel
+- **Backend**: Laravel 11 / 12, Eloquent ORM, Laravel Breeze, Notifications
+- **Frontend**: Tailwind CSS v3/v4, Blade components, Alpine.js
+- **Baza danych**: MySQL / SQLite / PostgreSQL
+- **Inne**: Sortable.js (drag & drop), Laravel Sail
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Demo / Zrzuty ekranu
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+*(tu wstaw 3–5 zrzutów ekranu – najlepiej w poziomie)*
 
-## Laravel Sponsors
+| Dashboard użytkownika              | Tablica Kanban projektu            | Widok szczegółowy zadania          |
+|------------------------------------|------------------------------------|------------------------------------|
+| ![Dashboard](screenshots/1-dashboard.png) | ![Kanban](screenshots/2-kanban.png) | ![Task detail](screenshots/3-task.png) |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+*(zrób screeny w trybie jasnym i ciemnym – to robi wrażenie)*
 
-### Premium Partners
+## Instalacja i uruchomienie lokalnie
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Wymagania
 
-## Contributing
+- PHP ≥ 8.2
+- Composer
+- Node.js + npm
+- MySQL / SQLite / PostgreSQL
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Kroki
 
-## Code of Conduct
+1. Sklonuj repozytorium
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+   git clone https://github.com/kamilszwaradzki/project-manager.git
+   cd project-manager
+```
+2. Zainstaluj zależności
+```bash
+composer install
+npm install
+```
+3. Skopiuj plik .env i skonfiguruj
+```Bash
+cp .env.example .env
+```
+W pliku `.env` ustaw:
+* połączenie z bazą danych (`DB_*`)
+* `APP_URL=http://localhost`
 
-## Security Vulnerabilities
+4. Wygeneruj klucz aplikacji
+```bash
+php artisan key:generate
+```
+5. Uruchom migracje i seedery (opcjonalnie)
+```bash
+php artisan migrate --seed
+```
+6. Skompiluj assety
+```bash
+npm run dev
+# lub w produkcji:
+npm run build
+```
+7. Uruchom serwer
+```bash
+php artisan serve
+# albo użyj Laravel Sail
+```
+Aplikacja powinna być dostępna pod: http://localhost:8000
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Struktura Projektu
+```
+app/                  ← Modele, serwisy, kontrolery
+database/migrations   ← Migracje bazy danych
+resources/views       ← Widoki Blade + komponenty
+resources/css         ← Tailwind (app.css)
+public/               ← Assety publiczne
+routes/               ← Definicje tras (web.php)
+tests/                ← Testy (opcjonalnie)
+```
+## Co warto jeszcze dodać?
+* Testy automatyczne (Pest)
+* CI/CD (GitHub Actions)
+* Deploy na Vercel / Forge / Railway / Laravel Vapor
+* Dokumentacja API (endpointy REST / Sanctum)
 
-## License
+## Autor
+**Kamil Szwaradzki** \
+Portfolio: https://code4all.eu \
+GitHub: https://github.com/kamilszwaradzki \
+LinkedIn: https://linkedin.com/in/kamil-szwaradzki
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Licencja
+MIT License – możesz swobodnie używać kodu do celów edukacyjnych i komercyjnych (z zachowaniem dobrej praktyki – podaj źródło jeśli mocno przerabiasz).
