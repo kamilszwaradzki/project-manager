@@ -49,6 +49,11 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $project->load(['tasks' => function ($query) {
+            $query->orderBy('priority', 'desc')
+                ->orderBy('due_date');
+        }]);
+
         return view('project.show', ['project' => $project]);
     }
 

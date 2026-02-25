@@ -37,7 +37,7 @@ class TaskController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority'    => 'required|in:low,medium,high,urgent',
-            'status'      => 'required|in:todo,in_progress,done',
+            'status'      => 'required|in:todo,in-progress,review,done',
             'due_date'    => 'nullable|date|after_or_equal:today',
         ]);
 
@@ -69,7 +69,7 @@ class TaskController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority'    => 'required|in:low,medium,high,urgent',
-            'status'      => 'required|in:todo,in_progress,done',
+            'status'      => 'required|in:todo,in-progress,review,done',
             'due_date'    => 'nullable|date|after_or_equal:today',
         ]);
 

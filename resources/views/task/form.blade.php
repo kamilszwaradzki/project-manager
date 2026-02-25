@@ -62,7 +62,7 @@
                             <select name="status" id="status"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
                                 <option value="todo" {{ old('status', $task->status->value ?? '') === 'todo' ? 'selected' : '' }}>Do zrobienia</option>
-                                <option value="in_progress" {{ old('status', $task->status->value ?? '') === 'in_progress' ? 'selected' : '' }}>W trakcie</option>
+                                <option value="in-progress" {{ old('status', $task->status->value ?? '') === 'in-progress' ? 'selected' : '' }}>W trakcie</option>
                                 <option value="review" {{ old('status', $task->status->value ?? '') === 'review' ? 'selected' : '' }}>Do weryfikacji</option>
                                 <option value="done" {{ old('status', $task->status->value ?? '') === 'done' ? 'selected' : '' }}>Zakończone</option>
                             </select>

@@ -64,13 +64,213 @@
                 </div>
                 
                 <div class="p-6">
-                    <!-- Miejsce na tablicę Kanban / listę zadań – do zrobienia później -->
                     <div class="text-center py-12 text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        <p class="text-lg">Widok zadań w budowie</p>
-                        <p class="text-sm mt-2">Tutaj pojawi się tablica Kanban lub lista zadań</p>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Tablica Kanban</h2>
+
+                            <div class="overflow-x-auto pb-4">
+                                <div class="inline-flex gap-6 min-w-full">
+                                    <!-- Kolumna: To Do -->
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Do zrobienia</h3>
+                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                {{ $project->tasks->where('status', 'todo')->count() }}
+                                            </span>
+                                        </div>
+
+                                        <div class="space-y-4 min-h-[200px]">
+                                            @forelse ($project->tasks->where('status', 'todo') as $task)
+                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                    <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                                        {{ $task->description ?? 'Brak opisu' }}
+                                                    </p>
+
+                                                    <div class="flex flex-wrap gap-2 text-xs">
+                                                        <span class="px-2.5 py-0.5 rounded-full font-medium
+                                                            {{ $task->priority->color() }}">
+                                                            {{ $task->priority->label() ?? ucfirst($task->priority ?? '—') }}
+                                                        </span>
+
+                                                        @if($task->due_date)
+                                                            <span class="px-2.5 py-0.5 rounded-full 
+                                                                {{ $task->due_date->isPast() ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                                Termin: {{ $task->due_date->format('d.m.Y') }}
+                                                            </span>
+                                                        @endif
+
+                                                        <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                                                            {{ $task->assignedTo?->name ?? 'Nieprzypisane' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="text-center text-gray-500 dark:text-gray-400 py-8 text-sm">
+                                                    Brak zadań w tej kolumnie
+                                                </div>
+                                            @endforelse
+                                        </div>
+
+                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'todo']) }}"
+                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
+                                            + Dodaj zadanie
+                                        </a>
+                                    </div>
+
+                                    <!-- Kolumna: In Progress → analogicznie jak wyżej, tylko status 'in-progress' -->
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                                        <!-- ... identyczna struktura ... -->
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">W trakcie</h3>
+                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                {{ $project->tasks->where('status', 'in-progress')->count() }}
+                                            </span>
+                                        </div>
+
+                                        <div class="space-y-4 min-h-[200px]">
+                                            @forelse ($project->tasks->where('status', 'in-progress') as $task)
+                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                    <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                                        {{ $task->description ?? 'Brak opisu' }}
+                                                    </p>
+
+                                                    <div class="flex flex-wrap gap-2 text-xs">
+                                                        <span class="px-2.5 py-0.5 rounded-full font-medium
+                                                            {{ $task->priority->color() }}">
+                                                            {{ $task->priority->label() ?? ucfirst($task->priority ?? '—') }}
+                                                        </span>
+
+                                                        @if($task->due_date)
+                                                            <span class="px-2.5 py-0.5 rounded-full 
+                                                                {{ $task->due_date->isPast() ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                                Termin: {{ $task->due_date->format('d.m.Y') }}
+                                                            </span>
+                                                        @endif
+
+                                                        <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                                                            {{ $task->assignedTo?->name ?? 'Nieprzypisane' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="text-center text-gray-500 dark:text-gray-400 py-8 text-sm">
+                                                    Brak zadań w tej kolumnie
+                                                </div>
+                                            @endforelse
+                                        </div>
+
+                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'in-progress']) }}"
+                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
+                                            + Dodaj zadanie
+                                        </a>
+                                    </div>
+
+                                    <!-- Kolumna: Review → analogicznie -->
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Do weryfikacji</h3>
+                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                {{ $project->tasks->where('status', 'review')->count() }}
+                                            </span>
+                                        </div>
+
+                                        <div class="space-y-4 min-h-[200px]">
+                                            @forelse ($project->tasks->where('status', 'review') as $task)
+                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                    <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                                        {{ $task->description ?? 'Brak opisu' }}
+                                                    </p>
+
+                                                    <div class="flex flex-wrap gap-2 text-xs">
+                                                        <span class="px-2.5 py-0.5 rounded-full font-medium
+                                                            {{ $task->priority->color() }}">
+                                                            {{ $task->priority->label() ?? ucfirst($task->priority ?? '—') }}
+                                                        </span>
+
+                                                        @if($task->due_date)
+                                                            <span class="px-2.5 py-0.5 rounded-full 
+                                                                {{ $task->due_date->isPast() ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                                Termin: {{ $task->due_date->format('d.m.Y') }}
+                                                            </span>
+                                                        @endif
+
+                                                        <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                                                            {{ $task->assignedTo?->name ?? 'Nieprzypisane' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="text-center text-gray-500 dark:text-gray-400 py-8 text-sm">
+                                                    Brak zadań w tej kolumnie
+                                                </div>
+                                            @endforelse
+                                        </div>
+
+                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'review']) }}"
+                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
+                                            + Dodaj zadanie
+                                        </a>
+                                    </div>
+
+                                    <!-- Kolumna: Done → analogicznie -->
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Zrobione</h3>
+                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                {{ $project->tasks->where('status', 'done')->count() }}
+                                            </span>
+                                        </div>
+
+                                        <div class="space-y-4 min-h-[200px]">
+                                            @forelse ($project->tasks->where('status', 'done') as $task)
+                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                    <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                                        {{ $task->description ?? 'Brak opisu' }}
+                                                    </p>
+
+                                                    <div class="flex flex-wrap gap-2 text-xs">
+                                                        <span class="px-2.5 py-0.5 rounded-full font-medium
+                                                            {{ $task->priority->color() }}">
+                                                            {{ $task->priority->label() ?? ucfirst($task->priority ?? '—') }}
+                                                        </span>
+
+                                                        @if($task->due_date)
+                                                            <span class="px-2.5 py-0.5 rounded-full 
+                                                                {{ $task->due_date->isPast() ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                                Termin: {{ $task->due_date->format('d.m.Y') }}
+                                                            </span>
+                                                        @endif
+
+                                                        <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                                                            {{ $task->assignedTo?->name ?? 'Nieprzypisane' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="text-center text-gray-500 dark:text-gray-400 py-8 text-sm">
+                                                    Brak zadań w tej kolumnie
+                                                </div>
+                                            @endforelse
+                                        </div>
+
+                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'done']) }}"
+                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
+                                            + Dodaj zadanie
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-10 bg-white dark:bg-gray-800 shadow rounded-xl p-6">
@@ -111,16 +311,6 @@
                         @endif
                     </div>
                 </div>
-            </div>
-
-            <!-- Przycisk dodawania zadania (jeśli potrzebny) -->
-            <div class="mt-6 flex justify-end">
-                <a href="#" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Dodaj nowe zadanie
-                </a>
             </div>
         </div>
     </div>
