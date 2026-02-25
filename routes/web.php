@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,4 +18,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::controller(ProjectController::class)->group(function () {
+        Route::get('/projects', 'index')->name('projects.index');
+        Route::get('/projects/new', 'create')->name('projects.create');
+        Route::get('/projects/{project}', 'show')->name('projects.show');
+        Route::post('/projects', 'store')->name('projects.store');
+        Route::get('/projects/{project}/edit', 'edit')->name('projects.edit');
+        Route::put('/projects/{project}', 'update')->name('projects.update');
+        Route::delete('/projects/{project}', 'destroy')->name('projects.destroy');
+    });
+});
 require __DIR__.'/auth.php';
