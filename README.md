@@ -1,7 +1,7 @@
 # Project Manager – Aplikacja do zarządzania projektami
 
-![Project preview](https://via.placeholder.com/1200x600.png?text=Project+Manager+Screenshot)  
-*(zastąp ten placeholder prawdziwym zrzutem ekranu – najlepiej 2–3 screeny w sekcji poniżej)*
+![Project preview](screenshots/project_preview.webp)  
+
 
 Prosta, nowoczesna aplikacja typu Kanban do zarządzania projektami i zadaniami.  
 Stworzona jako projekt portfolio, demonstrująca praktyczne użycie **Laravel 11/12** + **Tailwind CSS** + Blade + Alpine.js.
@@ -26,13 +26,10 @@ Stworzona jako projekt portfolio, demonstrująca praktyczne użycie **Laravel 11
 
 ## Demo / Zrzuty ekranu
 
-*(tu wstaw 3–5 zrzutów ekranu – najlepiej w poziomie)*
-
 | Dashboard użytkownika              | Tablica Kanban projektu            | Widok szczegółowy zadania          |
 |------------------------------------|------------------------------------|------------------------------------|
-| ![Dashboard](screenshots/1-dashboard.png) | ![Kanban](screenshots/2-kanban.png) | ![Task detail](screenshots/3-task.png) |
+| ![Dashboard](screenshots/project_preview.webp) | ![Kanban](screenshots/kanban.webp) | ![Task detail](screenshots/task_details.webp) |
 
-*(zrób screeny w trybie jasnym i ciemnym – to robi wrażenie)*
 
 ## Instalacja i uruchomienie lokalnie
 
