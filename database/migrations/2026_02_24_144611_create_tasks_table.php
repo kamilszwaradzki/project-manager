@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('status')->default('todo');
             $table->string('priority')->default('medium');
             $table->date('due_date')->nullable();
-            $table->foreignId('assigned_to')->constrained('users', 'id')->cascadeOnDelete();
+            $table->foreignId('assigned_to')->nullable()->constrained('users', 'id')->cascadeOnDelete();
             $table->timestamps();
         });
     }

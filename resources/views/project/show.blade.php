@@ -73,27 +73,43 @@
                         <p class="text-sm mt-2">Tutaj pojawi się tablica Kanban lub lista zadań</p>
                     </div>
 
-                    <!-- Przykładowa lista zadań (do zastąpienia później) -->
-                    @if($project->tasks->isNotEmpty())
-                        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach($project->tasks as $task)
-                                <li class="py-3 flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <input type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                        <span class="ml-3 text-gray-900 dark:text-white">{{ $task->title }}</span>
-                                    </div>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ $task->status }}</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <p class="text-center text-gray-500 dark:text-gray-400 py-8">
-                            Brak zadań w tym projekcie. 
-                            <a href="#" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
-                                Dodaj pierwsze zadanie
+                    <div class="mt-10 bg-white dark:bg-gray-800 shadow rounded-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-semibold">Zadania</h2>
+                            <a href="{{ route('projects.tasks.create', $project) }}"
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                + Nowe zadanie
                             </a>
-                        </p>
-                    @endif
+                        </div>
+
+                        @if($project->tasks->isEmpty())
+                            <p class="text-gray-500 text-center py-8">Brak zadań w tym projekcie.</p>
+                        @else
+                            <div class="space-y-4">
+                                @foreach($project->tasks as $task)
+                                    <div class="border-l-4 pl-4 {{ $task->priority->color() }} flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium">{{ $task->title }}</h3>
+                                            <p class="text-sm text-gray-600">{{ Str::limit($task->description, 80) }}</p>
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                Priorytet: {{ $task->priority->label() ?? $task->priority }}
+                                                • Status: {{ ucfirst($task->status->value) }}
+                                                • Termin: {{ $task->due_date ?? '—' }}
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-3 text-sm">
+                                            <a href="{{ route('projects.tasks.edit', [$project, $task]) }}" class="text-amber-600 hover:underline">Edytuj</a>
+                                            <form action="{{ route('projects.tasks.destroy', [$project, $task]) }}" method="POST" class="inline">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:underline"
+                                                        onclick="return confirm('Usunąć to zadanie?')">Usuń</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
 

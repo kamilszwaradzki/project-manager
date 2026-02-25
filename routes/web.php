@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,17 +17,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::controller(ProjectController::class)->group(function () {
-        Route::get('/projects', 'index')->name('projects.index');
-        Route::get('/projects/new', 'create')->name('projects.create');
-        Route::get('/projects/{project}', 'show')->name('projects.show');
-        Route::post('/projects', 'store')->name('projects.store');
-        Route::get('/projects/{project}/edit', 'edit')->name('projects.edit');
-        Route::put('/projects/{project}', 'update')->name('projects.update');
-        Route::delete('/projects/{project}', 'destroy')->name('projects.destroy');
+    Route::resource('projects', ProjectController::class);
+    Route::controller(TaskController::class)->group(function () {
+        Route::get('/projects/{project}/tasks', 'index')->name('projects.tasks.index');
+        Route::post('/projects/{project}/tasks', 'store')->name('projects.tasks.store');
+        Route::get('/projects/{project}/tasks/create', 'create')->name('projects.tasks.create');
+        Route::put('/projects/{project}/tasks/{task}', 'update')->name('projects.tasks.update');
+        Route::get('/projects/{project}/tasks/{task}/edit', 'edit')->name('projects.tasks.edit');
+        Route::delete('/projects/{project}/tasks/{task}', 'destroy')->name('projects.tasks.destroy');
     });
 });
 require __DIR__.'/auth.php';

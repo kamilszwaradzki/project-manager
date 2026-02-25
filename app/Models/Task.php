@@ -24,6 +24,7 @@ class Task extends Model
     protected $casts = [
         'status' => TaskStatus::class,
         'priority' => TaskPriority::class,
+        'due_date' => 'date:Y-m-d',
     ];
 
     public $timestamps = true;

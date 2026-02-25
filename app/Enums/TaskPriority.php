@@ -21,10 +21,10 @@ enum TaskPriority: string
     public function color(): string
     {
         return match($this) {
-            self::LOW    => 'gray',
-            self::MEDIUM => 'blue',
-            self::HIGH   => 'orange',
-            self::URGENT => 'red',
+            self::LOW    => 'bg-green-100 text-green-800',
+            self::MEDIUM => 'bg-blue-100 text-blue-800',
+            self::HIGH   => 'bg-orange-100 text-orange-800',
+            self::URGENT => 'bg-red-100 text-red-800',
         };
     }
 
