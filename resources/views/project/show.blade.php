@@ -79,10 +79,11 @@
                                             </span>
                                         </div>
 
-                                        <div class="space-y-4 min-h-[200px]">
+                                        <div class="kanban-column space-y-4 min-h-[200px]"  data-status="todo" id="column-todo">
                                             @forelse ($project->tasks->where('status', 'todo') as $task)
-                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
-                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow" data-task-id="{{ $task->id }}" draggable="true">
+                                                    <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -129,10 +130,11 @@
                                             </span>
                                         </div>
 
-                                        <div class="space-y-4 min-h-[200px]">
+                                        <div class="kanban-column space-y-4 min-h-[200px]" data-status="in-progress" id="column-in-progress">
                                             @forelse ($project->tasks->where('status', 'in-progress') as $task)
-                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
-                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow" data-task-id="{{ $task->id }}" draggable="true">
+                                                    <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -179,10 +181,11 @@
                                             </span>
                                         </div>
 
-                                        <div class="space-y-4 min-h-[200px]">
+                                        <div class="kanban-column space-y-4 min-h-[200px]" data-status="review" id="column-review">
                                             @forelse ($project->tasks->where('status', 'review') as $task)
-                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
-                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow" data-task-id="{{ $task->id }}" draggable="true">
+                                                    <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -229,10 +232,11 @@
                                             </span>
                                         </div>
 
-                                        <div class="space-y-4 min-h-[200px]">
+                                        <div class="kanban-column space-y-4 min-h-[200px]" data-status="done" id="column-done">
                                             @forelse ($project->tasks->where('status', 'done') as $task)
-                                                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
-                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow">
+                                                <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
+                                                    {{ $task->priority->color() }} hover:shadow-lg transition-shadow" data-task-id="{{ $task->id }}" draggable="true">
+                                                    <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}

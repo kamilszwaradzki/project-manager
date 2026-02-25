@@ -91,4 +91,15 @@ class TaskController extends Controller
         return redirect()->route('projects.show', $project)
             ->with('success', 'Zadanie usunięte.');
     }
+
+    public function updateStatus(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:todo,in-progress,review,done',
+        ]);
+
+        $task->update(['status' => $validated['status']]);
+
+        return response()->json(['success' => true]);
+    }
 }

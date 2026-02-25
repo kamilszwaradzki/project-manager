@@ -24,7 +24,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/projects/{project}/tasks/create', 'create')->name('projects.tasks.create');
         Route::put('/projects/{project}/tasks/{task}', 'update')->name('projects.tasks.update');
         Route::get('/projects/{project}/tasks/{task}/edit', 'edit')->name('projects.tasks.edit');
+        Route::patch('/tasks/{task}/status', 'updateStatus')->name('tasks.update-status');
         Route::delete('/projects/{project}/tasks/{task}', 'destroy')->name('projects.tasks.destroy');
     });
+    
 });
 require __DIR__.'/auth.php';
