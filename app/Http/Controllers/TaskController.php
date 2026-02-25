@@ -102,4 +102,27 @@ class TaskController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function details(Task $task)
+    {
+
+        $task->load(['comments.user']);
+
+        return response()->json([
+            'id'          => $task->id,
+            'title'       => $task->title,
+            'description' => $task->description,
+            'priority'    => $task->priority,
+            'status'      => $task->status,
+            'due_date'    => $task->due_date?->format('Y-m-d'),
+            'comments'    => $task->comments->map(function ($c) {
+                return [
+                    'id'         => $c->id,
+                    'body'       => $c->body,
+                    'created_at' => $c->created_at->diffForHumans(),
+                    'user'       => ['name' => $c->user->name ?? 'Użytkownik'],
+                ];
+            }),
+        ]);
+    }
 }

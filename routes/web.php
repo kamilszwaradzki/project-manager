@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
@@ -27,6 +28,13 @@ Route::middleware('auth')->group(function () {
         Route::patch('/tasks/{task}/status', 'updateStatus')->name('tasks.update-status');
         Route::delete('/projects/{project}/tasks/{task}', 'destroy')->name('projects.tasks.destroy');
     });
-    
+    Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])
+        ->name('comments.store');
+
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
+        ->name('comments.destroy');
+
+    Route::get('/tasks/{task}/details', [TaskController::class, 'details'])
+        ->name('tasks.details');
 });
 require __DIR__.'/auth.php';
