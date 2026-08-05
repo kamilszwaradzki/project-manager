@@ -1,5 +1,7 @@
 # Project Manager – Aplikacja do zarządzania projektami
 
+[![Tests](https://github.com/kamilszwaradzki/project-manager/actions/workflows/tests.yml/badge.svg)](https://github.com/kamilszwaradzki/project-manager/actions/workflows/tests.yml)
+
 ![Project preview](screenshots/project_preview.webp)  
 
 
