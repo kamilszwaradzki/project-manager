@@ -14,10 +14,12 @@ class Task extends Model
     use HasFactory;
 
     protected $fillable = [
+        'project_id',
         'title',
         'description',
         'status',
         'priority',
+        'tags',
         'due_date',
         'assigned_to'
     ];
@@ -43,5 +45,23 @@ class Task extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class)->latest();
+    }
+
+    public function tagsList(): array
+    {
+        return $this->tags
+            ? array_filter(array_map('trim', explode(',', $this->tags)))
+            : [];
+    }
+
+    public static function normalizeTags(?string $tags): ?string
+    {
+        if (! $tags) {
+            return null;
+        }
+
+        $unique = array_unique(array_filter(array_map('trim', explode(',', $tags))));
+
+        return $unique ? implode(',', $unique) : null;
     }
 }

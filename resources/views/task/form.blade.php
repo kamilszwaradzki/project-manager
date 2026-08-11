@@ -43,6 +43,16 @@
                         @error('description') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- Tagi -->
+                    <div>
+                        <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tagi</label>
+                        <input type="text" name="tags" id="tags" value="{{ old('tags', $task->tags ?? '') }}"
+                               placeholder="np. EPIC 1, BLOKER"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Oddziel przecinkami.</p>
+                        @error('tags') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Priorytet -->
                         <div>

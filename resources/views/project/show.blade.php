@@ -68,25 +68,67 @@
                         <div>
                             <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Tablica Kanban</h2>
 
+                            @php
+                                $allTags = $project->tasks
+                                    ->flatMap(fn ($t) => $t->tagsList())
+                                    ->unique()
+                                    ->sort()
+                                    ->values();
+                            @endphp
+
+                            @if($allTags->isNotEmpty())
+                                <div class="mb-6 text-left">
+                                    <div class="flex flex-wrap items-center gap-2" id="tag-filter-bar">
+                                        <span class="text-base font-medium text-gray-600 dark:text-gray-300 mr-1">Filtruj po tagach:</span>
+                                        @foreach($allTags as $tag)
+                                            <button
+                                                type="button"
+                                                class="tag-filter-btn px-3.5 py-1.5 rounded-full text-sm font-medium border border-purple-300 text-purple-700 dark:text-purple-300 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition"
+                                                data-tag="{{ $tag }}">
+                                                {{ $tag }}
+                                            </button>
+                                        @endforeach
+                                        <button type="button" id="tag-filter-clear"
+                                                class="px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-500 dark:text-gray-400 hover:underline hidden">
+                                            Wyczyść filtr
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
+
                             <div class="overflow-x-auto pb-4">
                                 <div class="inline-flex gap-6 min-w-full">
                                     <!-- Kolumna: To Do -->
-                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700 flex flex-col">
                                         <div class="flex items-center justify-between mb-4">
                                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Do zrobienia</h3>
-                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
-                                                {{ $project->tasks->where('status', 'todo')->count() }}
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                    {{ $project->tasks->where('status', 'todo')->count() }}
+                                                </span>
+                                                <a href="{{ route('projects.tasks.create', [$project, 'status' => 'todo']) }}"
+                                                   title="Dodaj zadanie"
+                                                   class="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold leading-none">
+                                                    +
+                                                </a>
+                                            </div>
                                         </div>
 
-                                        <div class="kanban-column space-y-4 min-h-[200px]"  data-status="todo" id="column-todo">
+                                        <div class="kanban-column space-y-4 flex-1 min-h-[200px] overflow-y-auto" data-status="todo" id="column-todo">
                                             @forelse ($project->tasks->where('status', 'todo') as $task)
                                                 <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
                                                     {{ $task->priority->color() }} hover:shadow-lg transition-shadow" 
                                                     x-data=""
                                                     @click="$dispatch('open-task-modal', { taskId: '{{ $task->id }}' })"
-                                                    data-task-id="{{ $task->id }}" draggable="true">
+                                                    data-task-id="{{ $task->id }}" data-tags="{{ implode(',', $task->tagsList()) }}" draggable="true">
                                                     <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
+                                                    @if($task->tagsList())
+                                                        <div class="flex flex-wrap gap-1 mb-2">
+                                                            @foreach($task->tagsList() as $tag)
+                                                                <span class="px-2.5 py-1 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-sm font-medium">{{ $tag }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -116,31 +158,40 @@
                                                 </div>
                                             @endforelse
                                         </div>
-
-                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'todo']) }}"
-                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
-                                            + Dodaj zadanie
-                                        </a>
                                     </div>
 
                                     <!-- Kolumna: In Progress → analogicznie jak wyżej, tylko status 'in-progress' -->
-                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700 flex flex-col">
                                         <!-- ... identyczna struktura ... -->
                                         <div class="flex items-center justify-between mb-4">
                                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">W trakcie</h3>
-                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
-                                                {{ $project->tasks->where('status', 'in-progress')->count() }}
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                    {{ $project->tasks->where('status', 'in-progress')->count() }}
+                                                </span>
+                                                <a href="{{ route('projects.tasks.create', [$project, 'status' => 'in-progress']) }}"
+                                                   title="Dodaj zadanie"
+                                                   class="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold leading-none">
+                                                    +
+                                                </a>
+                                            </div>
                                         </div>
 
-                                        <div class="kanban-column space-y-4 min-h-[200px]" data-status="in-progress" id="column-in-progress">
+                                        <div class="kanban-column space-y-4 flex-1 min-h-[200px] overflow-y-auto" data-status="in-progress" id="column-in-progress">
                                             @forelse ($project->tasks->where('status', 'in-progress') as $task)
                                                 <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
                                                     {{ $task->priority->color() }} hover:shadow-lg transition-shadow" 
                                                     x-data=""
                                                     @click="$dispatch('open-task-modal', { taskId: '{{ $task->id }}' })"
-                                                    data-task-id="{{ $task->id }}" draggable="true">
+                                                    data-task-id="{{ $task->id }}" data-tags="{{ implode(',', $task->tagsList()) }}" draggable="true">
                                                     <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
+                                                    @if($task->tagsList())
+                                                        <div class="flex flex-wrap gap-1 mb-2">
+                                                            @foreach($task->tagsList() as $tag)
+                                                                <span class="px-2.5 py-1 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-sm font-medium">{{ $tag }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -170,31 +221,40 @@
                                                 </div>
                                             @endforelse
                                         </div>
-
-                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'in-progress']) }}"
-                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
-                                            + Dodaj zadanie
-                                        </a>
                                     </div>
 
                                     <!-- Kolumna: Review → analogicznie -->
-                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700 flex flex-col">
 
                                         <div class="flex items-center justify-between mb-4">
                                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Do weryfikacji</h3>
-                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
-                                                {{ $project->tasks->where('status', 'review')->count() }}
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                    {{ $project->tasks->where('status', 'review')->count() }}
+                                                </span>
+                                                <a href="{{ route('projects.tasks.create', [$project, 'status' => 'review']) }}"
+                                                   title="Dodaj zadanie"
+                                                   class="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold leading-none">
+                                                    +
+                                                </a>
+                                            </div>
                                         </div>
 
-                                        <div class="kanban-column space-y-4 min-h-[200px]" data-status="review" id="column-review">
+                                        <div class="kanban-column space-y-4 flex-1 min-h-[200px] overflow-y-auto" data-status="review" id="column-review">
                                             @forelse ($project->tasks->where('status', 'review') as $task)
                                                 <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
                                                     {{ $task->priority->color() }} hover:shadow-lg transition-shadow" 
                                                     x-data=""
                                                     @click="$dispatch('open-task-modal', { taskId: '{{ $task->id }}' })"
-                                                    data-task-id="{{ $task->id }}" draggable="true">
+                                                    data-task-id="{{ $task->id }}" data-tags="{{ implode(',', $task->tagsList()) }}" draggable="true">
                                                     <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
+                                                    @if($task->tagsList())
+                                                        <div class="flex flex-wrap gap-1 mb-2">
+                                                            @foreach($task->tagsList() as $tag)
+                                                                <span class="px-2.5 py-1 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-sm font-medium">{{ $tag }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -224,31 +284,40 @@
                                                 </div>
                                             @endforelse
                                         </div>
-
-                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'review']) }}"
-                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
-                                            + Dodaj zadanie
-                                        </a>
                                     </div>
 
                                     <!-- Kolumna: Done → analogicznie -->
-                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                                    <div class="min-w-[320px] max-w-[380px] bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-200 dark:border-gray-700 flex flex-col">
 
                                         <div class="flex items-center justify-between mb-4">
                                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Zrobione</h3>
-                                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
-                                                {{ $project->tasks->where('status', 'done')->count() }}
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                                                    {{ $project->tasks->where('status', 'done')->count() }}
+                                                </span>
+                                                <a href="{{ route('projects.tasks.create', [$project, 'status' => 'done']) }}"
+                                                   title="Dodaj zadanie"
+                                                   class="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold leading-none">
+                                                    +
+                                                </a>
+                                            </div>
                                         </div>
 
-                                        <div class="kanban-column space-y-4 min-h-[200px]" data-status="done" id="column-done">
+                                        <div class="kanban-column space-y-4 flex-1 min-h-[200px] overflow-y-auto" data-status="done" id="column-done">
                                             @forelse ($project->tasks->where('status', 'done') as $task)
                                                 <div class="task-card bg-white dark:bg-gray-900 rounded-lg shadow p-4 border-l-4 
                                                     {{ $task->priority->color() }} hover:shadow-lg transition-shadow" 
                                                     x-data=""
                                                     @click="$dispatch('open-task-modal', { taskId: '{{ $task->id }}' })"
-                                                    data-task-id="{{ $task->id }}" draggable="true">
+                                                    data-task-id="{{ $task->id }}" data-tags="{{ implode(',', $task->tagsList()) }}" draggable="true">
                                                     <div class="task-handle cursor-move text-gray-400 mb-2">☰</div>
+                                                    @if($task->tagsList())
+                                                        <div class="flex flex-wrap gap-1 mb-2">
+                                                            @foreach($task->tagsList() as $tag)
+                                                                <span class="px-2.5 py-1 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-sm font-medium">{{ $tag }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                     <h4 class="font-medium text-gray-900 dark:text-white mb-1">{{ $task->title }}</h4>
                                                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                                         {{ $task->description ?? 'Brak opisu' }}
@@ -278,11 +347,6 @@
                                                 </div>
                                             @endforelse
                                         </div>
-
-                                        <a href="{{ route('projects.tasks.create', [$project, 'status' => 'done']) }}"
-                                        class="mt-4 block text-center py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
-                                            + Dodaj zadanie
-                                        </a>
                                     </div>
                                 </div>
                             </div>

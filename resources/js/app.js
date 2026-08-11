@@ -8,6 +8,49 @@ window.Alpine = Alpine;
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
+    const filterBar = document.getElementById('tag-filter-bar');
+    const clearBtn = document.getElementById('tag-filter-clear');
+
+    if (filterBar) {
+        const activeTags = new Set();
+
+        const applyFilter = () => {
+            const cards = document.querySelectorAll('.task-card');
+
+            cards.forEach(card => {
+                const cardTags = (card.dataset.tags || '').split(',').filter(Boolean);
+                const visible = activeTags.size === 0 || cardTags.some(t => activeTags.has(t));
+                card.classList.toggle('hidden', !visible);
+            });
+
+            clearBtn.classList.toggle('hidden', activeTags.size === 0);
+        };
+
+        filterBar.querySelectorAll('.tag-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tag = btn.dataset.tag;
+
+                if (activeTags.has(tag)) {
+                    activeTags.delete(tag);
+                    btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-600');
+                } else {
+                    activeTags.add(tag);
+                    btn.classList.add('bg-purple-600', 'text-white', 'border-purple-600');
+                }
+
+                applyFilter();
+            });
+        });
+
+        clearBtn.addEventListener('click', () => {
+            activeTags.clear();
+            filterBar.querySelectorAll('.tag-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-600');
+            });
+            applyFilter();
+        });
+    }
+
     const columns = document.querySelectorAll('.kanban-column');
 
     columns.forEach(column => {

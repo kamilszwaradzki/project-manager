@@ -38,8 +38,11 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'priority'    => 'required|in:low,medium,high,urgent',
             'status'      => 'required|in:todo,in-progress,review,done',
+            'tags'        => 'nullable|string|max:255',
             'due_date'    => 'nullable|date|after_or_equal:today',
         ]);
+
+        $validated['tags'] = Task::normalizeTags($validated['tags'] ?? null);
 
         $project->tasks()->create($validated);
 
@@ -70,8 +73,11 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'priority'    => 'required|in:low,medium,high,urgent',
             'status'      => 'required|in:todo,in-progress,review,done',
+            'tags'        => 'nullable|string|max:255',
             'due_date'    => 'nullable|date|after_or_equal:today',
         ]);
+
+        $validated['tags'] = Task::normalizeTags($validated['tags'] ?? null);
 
         $task->update($validated);
 
@@ -114,6 +120,7 @@ class TaskController extends Controller
             'description' => $task->description,
             'priority'    => $task->priority,
             'status'      => $task->status,
+            'tags'        => $task->tagsList(),
             'due_date'    => $task->due_date?->format('Y-m-d'),
             'comments'    => $task->comments->map(function ($c) {
                 return [
